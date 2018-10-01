@@ -1,0 +1,15 @@
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\Organization.exe.config
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\Organization.exe
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\Organization.pdb
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\HtmlAgilityPack.dll
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\Http.dll
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\Indexing.dll
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\Indexing.pdb
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\Http.pdb
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\HtmlAgilityPack.pdb
+C:\Users\Ian\source\repos\Organization\Organization\bin\Release\HtmlAgilityPack.xml
+C:\Users\Ian\source\repos\Organization\Organization\obj\Release\Organization.csprojResolveAssemblyReference.cache
+C:\Users\Ian\source\repos\Organization\Organization\obj\Release\Organization.csproj.CoreCompileInputs.cache
+C:\Users\Ian\source\repos\Organization\Organization\obj\Release\Organization.csproj.CopyComplete
+C:\Users\Ian\source\repos\Organization\Organization\obj\Release\Organization.exe
+C:\Users\Ian\source\repos\Organization\Organization\obj\Release\Organization.pdb

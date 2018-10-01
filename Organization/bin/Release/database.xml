@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<index>
+  <child>
+    <child>
+      <id>2</id>
+      <name>Disc 1</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\VS6PE_D1.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>3</id>
+      <name>Disc 2</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\VS6PE_D2.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <id>1</id>
+    <name>Visual Studio 6.0</name>
+    <description>Online training tools for Visual Studio 6.0</description>
+    <thumb>G:\Thumbs\VS6PE_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>4</id>
+    <name>Java I, Java II</name>
+    <description>
+    </description>
+    <thumb>G:\Thumbs\DLJJ_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>5</id>
+    <name>Lotus Notes</name>
+    <description>
+    </description>
+    <thumb>G:\Thumbs\LNDOLA_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <child>
+      <id>7</id>
+      <name>Disc 1
+      </name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\MSDNSL_D1.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>8</id>
+      <name>Disc 2</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\MSDNSL_D2.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>9</id>
+      <name>Disc 3</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\MSDNSL_D3.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <id>6</id>
+    <name>MSDN Subscription Library</name>
+    <description>
+    </description>
+    <thumb>G:\Thumbs\MSDNSL_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <child>
+      <id>11</id>
+      <name>Math Review Newtonian Mechanics</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\APPBC_D1.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>12</id>
+      <name>Fluid Mechanics &amp; Thermal Physics Electricity &amp; Magnetism</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\APPBC_D2.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>13</id>
+      <name>Waves &amp; Optics Atomic &amp; Nuclear Physics</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\APPBC_D3.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <id>10</id>
+    <name>AP Physics B/C</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\APPBC_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>14</id>
+    <name>AP Spanish</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\APSBM_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <child>
+      <id>16</id>
+      <name>Rollercoaster Tycoon</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\RCT1_D1.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>17</id>
+      <name>Loopy Landspaces</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\RCT1_D2.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <child>
+        <id>19</id>
+        <name>Back</name>
+        <description>
+        </description>
+        <thumb>G:\thumbs\RCT1_B2.png</thumb>
+        <hash>
+        </hash>
+        <tags />
+      </child>
+      <child>
+        <id>20</id>
+        <name>Front</name>
+        <description>
+        </description>
+        <thumb>G:\thumbs\RCT1_B1.png</thumb>
+        <hash>
+        </hash>
+        <tags />
+      </child>
+      <id>18</id>
+      <name>Booklet</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\RCT1_B1.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <id>15</id>
+    <name>Rollercoaster Tycoon</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\RCT1_C1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>21</id>
+    <name>Visual C++</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\MSVCPP_D2.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>22</id>
+    <name>Visual C++ Learning Edition</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\MSVCPP_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>23</id>
+    <name>Inspiration</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\INPS_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+</index>

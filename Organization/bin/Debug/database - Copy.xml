@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<index>
+  <child>
+    <child>
+      <id>2</id>
+      <name>Disc 1</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\v\VS6PE_D1.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>3</id>
+      <name>Disc 2</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\v\VS6PE_D2.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <id>1</id>
+    <name>Visual Studio 6.0</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\v\VS6PE_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>4</id>
+    <name>Lotus Notes 6.5.1</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\l\LNDOLA_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>5</id>
+    <name>Java I, Java II</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\d\DLJJ_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>6</id>
+    <name>AP Spanish</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\a\APSBM_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <child>
+      <id>8</id>
+      <name>Math Review Newtonian Mechanics Disc 1</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\a\APPBC_D1.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>9</id>
+      <name>Fluid Mechanics &amp; Thermal Physics Electricity &amp; Magnetism Disc 2</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\a\APPBC_D2.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>10</id>
+      <name>Waves &amp; Optics Atomic &amp; Nuclear Physics Disc 3</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\a\APPBC_D3.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <id>7</id>
+    <name>AP Physics B/C</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\a\APPBC_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>11</id>
+    <name>Inspiration 7.5</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\i\INPS_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <id>12</id>
+    <name>Macro Assembler 6.11</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\m\MASMVC_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+  <child>
+    <child>
+      <id>14</id>
+      <name>Disc 1</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\m\MSDNSL_D1.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>15</id>
+      <name>Disc 2</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\m\MSDNSL_D2.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <child>
+      <id>16</id>
+      <name>Disc 3</name>
+      <description>
+      </description>
+      <thumb>G:\thumbs\m\MSDNSL_D3.png</thumb>
+      <hash>
+      </hash>
+      <tags />
+    </child>
+    <id>13</id>
+    <name>MSDN Subscription Library</name>
+    <description>
+    </description>
+    <thumb>G:\thumbs\m\MSDNSL_D1.png</thumb>
+    <hash>
+    </hash>
+    <tags />
+  </child>
+</index>
