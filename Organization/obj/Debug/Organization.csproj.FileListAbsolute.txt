@@ -13,3 +13,4 @@ C:\Users\Ian\source\repos\Organization\Organization\obj\Debug\Organization.cspro
 C:\Users\Ian\source\repos\Organization\Organization\obj\Debug\Organization.csproj.CopyComplete
 C:\Users\Ian\source\repos\Organization\Organization\obj\Debug\Organization.exe
 C:\Users\Ian\source\repos\Organization\Organization\obj\Debug\Organization.pdb
+C:\Users\Ian\source\repos\Organization\Organization\bin\Debug\System.IO.Compression.ZipFile.dll

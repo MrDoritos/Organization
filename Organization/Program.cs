@@ -14,6 +14,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.IO;
 using System.Xml;
+using System.IO.Compression;
 
 namespace Organization
 {
@@ -231,18 +232,35 @@ namespace Organization
             }
         }
 
+        //static void SendFile(TcpClient client, string filepath)
+        //{
+        //    var a = new ResponseHeader(GetContentType(filepath)) { headerParameters = new HeaderParameter[] { new HeaderParameter(new HeaderVariable[] { new HeaderVariable("cache-control", "max-age=99999999") }) } };
+        //    FileInfo fi = new FileInfo(filepath);
+        //    string header = HttpResponse.HeaderToString((ulong)fi.Length, a);
+        //    FileStream fs = System.IO.File.OpenRead(filepath);
+        //    client.Client.Send(Encoding.ASCII.GetBytes(header + "\r\n"));
+        //    byte[] buffer = new byte[4096];
+        //    int i;
+        //    while ((i = fs.Read(buffer, 0, 4096)) != 0)
+        //    {
+        //        client.Client.Send(buffer, 0, i, SocketFlags.None);
+        //    }
+        //}
+
         static void SendFile(TcpClient client, string filepath)
         {
             var a = new ResponseHeader(GetContentType(filepath)) { headerParameters = new HeaderParameter[] { new HeaderParameter(new HeaderVariable[] { new HeaderVariable("cache-control", "max-age=99999999") }) } };
             FileInfo fi = new FileInfo(filepath);
             string header = HttpResponse.HeaderToString((ulong)fi.Length, a);
-            FileStream fs = System.IO.File.OpenRead(filepath);
             client.Client.Send(Encoding.ASCII.GetBytes(header + "\r\n"));
-            byte[] buffer = new byte[4096];
-            int i;
-            while ((i = fs.Read(buffer, 0, 4096)) != 0)
+            using (FileStream fs = System.IO.File.OpenRead(filepath))
             {
-                client.Client.Send(buffer, 0, i, SocketFlags.None);
+                byte[] buffer = new byte[4096];
+                int i;
+                while ((i = fs.Read(buffer, 0, 4096)) != 0)
+                {
+                    client.Client.Send(buffer, 0, i, SocketFlags.None);
+                }
             }
         }
 
@@ -265,6 +283,8 @@ namespace Organization
                     return ResponseHeader.ContentTypes.IMAGEJPEG;
                 case "ico":
                     return ResponseHeader.ContentTypes.ICO;
+                case "zip":
+                    return ResponseHeader.ContentTypes.ZIP;
                 default:
                     return ResponseHeader.ContentTypes.PLAIN;
             }
@@ -429,6 +449,10 @@ namespace Organization
             {
                 SearchUTIL(httpRequest, client);
             }
+            else if (httpRequest.RequestURI.StartsWith("download&"))
+            {
+                DownloadUTIL(httpRequest, client);
+            }
             else if (httpRequest.RequestURI.StartsWith("edit&"))
             {
                 EditUTIL(httpRequest, client);
@@ -521,6 +545,79 @@ namespace Organization
             SendDirectoryPage(selected, client);
         }
 
+        static void DownloadUTIL(HttpRequest request, TcpClient client)
+        {
+            var req = request.RequestURI.Remove(0, 9);
+
+            Child<SoftFile> selected = GetChild(req);
+
+            if (selected == null)
+            {
+                SendRedirect("/", client);
+            }
+            else
+            {
+                //string file = Zip(selected);
+                //SendFile(client, file);
+                //System.IO.File.Delete(file);
+                SendZip(selected, client);
+            }            
+        }
+
+        static void SendZip(Child<SoftFile> child, TcpClient client)
+        {
+            //Declaring the header
+            var a = new ResponseHeader(ResponseHeader.ContentTypes.ZIP);
+            //We need to get the length of the zipfile before we can send the header //string header = HttpResponse.HeaderToString((ulong)fi.Length, a);
+            //client.Client.Send(Encoding.ASCII.GetBytes(header + "\r\n"));
+            client.Client.Send(Encoding.ASCII.GetBytes(a + "\r\n"));
+            using (var stream = client.GetStream())
+            using (MemoryStream memstr = new MemoryStream())
+            using (ZipArchive zip = new ZipArchive(memstr, ZipArchiveMode.Create, true))
+            {
+                GetExistingThumbs(child, zip, new List<string>());
+                memstr.CopyTo(stream);
+            }
+        }
+
+        static string Zip(Child<SoftFile> child)
+        {
+            string name;// = child.Item.Id.ToString();
+            if (child.Item == null)
+                name = "1";
+            else
+                name = child.Item.Id.ToString();
+            if (!System.IO.File.Exists($"{name}.zip"))
+            using (ZipArchive zip = ZipFile.Open($"{name}.zip", ZipArchiveMode.Create))
+            {
+                var thumbs = zip.CreateEntry("thumbnails/");
+                List<string> thumbnailpaths = new List<string>();
+                GetExistingThumbs(child, ref thumbnailpaths);
+                foreach (var a in thumbnailpaths)
+                    zip.CreateEntryFromFile(a, $"thumbnails/{GetFileName(a)}");
+            }
+            return $"{name}.zip";
+        }
+
+        static string GetFileName(string path)
+        {
+            return path.Split('\\').Last();
+        }
+
+        static void GetExistingThumbs(Child<SoftFile> child, ref List<string> inputList)
+        {
+            if (child.Item != null && !inputList.Contains(child.Item.Thumbnail) && child.Item.ThumbnailExists) { inputList.Add(child.Item.Thumbnail); }
+            foreach (var a in child.Children)
+                GetExistingThumbs(a, ref inputList);
+        }
+
+        static void GetExistingThumbs(Child<SoftFile> child, ZipArchive zip, List<string> inputList)
+        {
+            if (child.Item != null && !inputList.Contains(child.Item.Thumbnail) && child.Item.ThumbnailExists) { zip.CreateEntryFromFile(child.Item.Thumbnail, $"thumbnails/{GetFileName(child.Item.Thumbnail)}"); }
+            foreach (var a in child.Children)
+                GetExistingThumbs(a, zip, inputList);
+        }
+
         static void SearchUTIL(HttpRequest request, TcpClient client)
         {
             var req = request.RequestURI.Remove(0, 7);
@@ -539,7 +636,6 @@ namespace Organization
             var req = request.RequestURI.Remove(0, 5);
 
             Child<SoftFile> selected = GetChild(req);
-
             
         }
 
@@ -643,7 +739,9 @@ namespace Organization
         {
             HtmlNode searchDiv = HtmlNode.CreateNode("<div id=\"search\" />");
             HtmlNode reloadForm = HtmlNode.CreateNode("<form action=\"/reload\" method=\"GET\" />");
-            HtmlNode saveForm = HtmlNode.CreateNode("<form action=\"/save\" method=\"GET\">");
+            HtmlNode saveForm = HtmlNode.CreateNode("<form action=\"/save\" method=\"GET\" />");
+            HtmlNode downloadForm = HtmlNode.CreateNode($"<form action=\"/download&{child}\" method=\"GET\" />");
+            downloadForm.AppendChild(HtmlNode.CreateNode("<input type=\"submit\" value=\"Download Zip\" />"));
             reloadForm.AppendChild(HtmlNode.CreateNode("<input type=\"submit\" value=\"Reload Database\" />"));
             saveForm.AppendChild(HtmlNode.CreateNode("<input type=\"submit\" value=\"Save Database\" />"));
             HtmlNode searchForm = HtmlNode.CreateNode($"<form action=\"/search&{child.ToString()}\" method=\"POST\" />");
@@ -653,6 +751,7 @@ namespace Organization
             searchForm.AppendChild(tagBox);
             searchForm.AppendChild(submit);
             searchForm.AppendChild(output);
+            searchDiv.AppendChild(downloadForm);
             searchDiv.AppendChild(searchForm);
             searchDiv.AppendChild(reloadForm);
             searchDiv.AppendChild(saveForm);
