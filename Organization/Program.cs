@@ -18,13 +18,13 @@ using System.IO.Compression;
 
 namespace Organization
 {
-    class Program
+    class Program : IDatabase
     {
         public static Server server = new Server();
-        public static readonly Index<SoftFile> CentralDirectory = new Index<SoftFile>();
+        public static Index<SoftFile> CentralDirectory { get; }
+        static List<SoftFile> Index { get; }
         public static DirectoryInfo ThumbnailDirectory;
         
-        static List<SoftFile> Index = new List<SoftFile>();
 
         static public uint NextId { get => GetNextId(); }
 
@@ -207,7 +207,8 @@ namespace Organization
             Child<SoftFile> selected = GetChild(req);
 
             //COMPLETE /TO-DO: Change from opening all the file bytes to using a filestream to stream the file bytes to the client/
-            if (selected.Item.ThumbnailExists)
+            
+            if (selected.Item != null && selected.Item.ThumbnailExists)
             {
 
                 //client.Client.Send(new HttpResponse(new ResponseHeader(GetContentType(selected.Item.Thumbnail)) { headerParameters = new HeaderParameter[] { new HeaderParameter(new HeaderVariable[] { new HeaderVariable("cache-control", "max-age=99999999") }) } }, new Content(GetThumbnail(selected.Item))).Serialize());
@@ -225,11 +226,9 @@ namespace Organization
                 SendFile(client, selected.Item.Thumbnail);
                 return;
             }
-            else
-            {
                 SendNotFound(client);
                 return;
-            }
+            
         }
 
         //static void SendFile(TcpClient client, string filepath)
@@ -314,7 +313,7 @@ namespace Organization
                 }
             }
 
-            if (System.IO.File.Exists("database.xml") && QueryBool("Load database?")) { LoadXml("database.xml"); }
+            if (System.IO.File.Exists("database.xml") && QueryBool("Load database?")) { CentralDirectory = new Index<SoftFile>(Database.Load("database.ian")); CentralDirectory.Name = ""; }
             else
             {
                 CentralDirectory.Name = "";
@@ -449,6 +448,10 @@ namespace Organization
             {
                 SearchUTIL(httpRequest, client);
             }
+            else if (httpRequest.RequestURI.StartsWith("details&"))
+            {
+                DetailsUTIL(httpRequest, client);
+            }
             else if (httpRequest.RequestURI.StartsWith("download&"))
             {
                 DownloadUTIL(httpRequest, client);
@@ -544,6 +547,30 @@ namespace Organization
             selected.AppendChild(AddFile(name ?? "undefined", thumb ?? ""));
             SendDirectoryPage(selected, client);
         }
+
+        static void DetailsUTIL(HttpRequest request, TcpClient client)
+        {
+            //Child<SoftFile> selected = GetChild(request.RequestURI.Remove(0, 8));
+            if (int.TryParse(request.RequestURI.Remove(0, 8), out int i))
+            {
+                SoftFile file = Index.FirstOrDefault(n => n.Id == i);
+
+                if (file == null)
+                {
+                    SendNotFound(client, true);
+                }
+                else
+                {
+                    SendDetailsPage(file, client);
+                }
+            }
+            else
+            {
+                SendNotFound(client, true);
+            }
+        }
+
+       
 
         static void DownloadUTIL(HttpRequest request, TcpClient client)
         {
@@ -647,11 +674,17 @@ namespace Organization
                 dictionary.Add(child, child.Item.Tags.Count(n => queryTags.Any(m => m == n)));
         }
 
-        static void SendNotFound(TcpClient client)
-        {
-            HttpResponse httpResponse = new HttpResponse(new ResponseHeader() { ResponseCode = ResponseHeader.ResponseCodes.NOTFOUND });
-            client.Client.Send(httpResponse.Serialize());
+        static void SendNotFound(TcpClient client, bool includetext = false)
+        {            
+            HttpResponse http;
+            if (includetext)
+                http = new HttpResponse(new ResponseHeader() { ResponseCode = ResponseHeader.ResponseCodes.NOTFOUND }, new Content(NotFoundText));
+            else
+                http = new HttpResponse(new ResponseHeader() { ResponseCode = ResponseHeader.ResponseCodes.NOTFOUND });
+            client.Client.Send(http.Serialize());
         }
+
+        static byte[] NotFoundText { get; } = Encoding.ASCII.GetBytes("The requested resource is unavailable at this time.");
 
         static HtmlNode styles = HtmlNode.CreateNode("<style>" +
             "html { background-color: darkblue;}" +
@@ -665,6 +698,50 @@ namespace Organization
             "</style>");
 
         
+
+        static void SendDetailsPage(SoftFile child, TcpClient client)
+        {
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml("<html style=\"font-family: consolas;\"><head><title>Directory</title></head><body></body></html>");
+            var body = doc.DocumentNode.SelectSingleNode("//html/body");
+
+            body.AppendChild(styles);
+            var div = body.AppendChild(HtmlNode.CreateNode("<div id=\"container\" />"));
+            var details = div.AppendChild(HtmlNode.CreateNode("<div id=\"cardholder\" />"));
+            div.AppendChild(GetSidebar(CentralDirectory));
+            if (child != null)
+                details = Details(child, details);
+            else
+                details.AppendChild(HtmlNode.CreateNode("No data for this node"));
+            client.Client.Send(new HttpResponse(new ResponseHeader(),new Content(Serialize(doc))).Serialize());            
+        }
+
+        static HtmlNode Details(SoftFile file, HtmlNode i)
+        {
+            i.AppendChild(HtmlNode.CreateNode($"<h1>{file.Name} ({file.Id})</h1>"));
+            i.AppendChild(HtmlNode.CreateNode($"<img style=\"height: 300px; width: 100%; max-height: 100%; max-width: 100%; margin:0; object-fit: contain\" src=\"/content&{file.ToString()}\">"));
+            i.AppendChild(HtmlNode.CreateNode($"<p>{file.Hash}</p>"));
+            var d = i.AppendChild(HtmlNode.CreateNode($"<p />"));
+            foreach (var a in file.Tags)
+                d.AppendChild(HtmlNode.CreateNode($"<strong>{a} </strong>"));
+            if (file.Digital)
+                i.AppendChild(GetLinks(file.Id));
+            i.AppendChild(HtmlNode.CreateNode($"<p>{file.Description}</p>"));
+            return i;
+        }
+
+        static HtmlNode GetLinks(uint id)
+        {
+            HtmlNode h = HtmlNode.CreateNode("<div id=\"links\" />");
+            foreach (var a in Index.Where(n => n.Links.Any(id.Equals)))
+                h.AppendChild(HtmlNode.CreateNode($"<a href=\"/details&{a.Id}\">{a.Name} ({a.Id})</a>"));
+            return h;
+        }
+
+        static void SendIndexPage(Child<SoftFile> child, TcpClient client)
+        {
+
+        }
 
         static void SendDirectoryPage(Child<SoftFile> child, TcpClient client)
         {
@@ -705,6 +782,8 @@ namespace Organization
             HtmlNode parentnode = HtmlNode.CreateNode("<div id=\"parent\" />");
             parentnode.AppendChild(GetTags(parent));
             parentnode.AppendChild(HtmlNode.CreateNode($"<h1 style=\"text-align:center; margin:0; margin-bottom:5%;\">{parent.Item.Name}</h1>"));
+            var p = parentnode.AppendChild(HtmlNode.CreateNode("<p />"));
+            p.AppendChild(HtmlNode.CreateNode($"<a href=\"/details&{parent.Item.Id}\">Details</a>"));
             parentnode.AppendChild(HtmlNode.CreateNode($"<img style=\"height: 300px; width: 100%; max-height: 100%; max-width: 100%; margin:0; object-fit: contain\" src=\"/content&{parent.ToString()}\">"));
             parentnode.AppendChild(HtmlNode.CreateNode($"<p>{parent.Item.Description}</p>"));
             return parentnode;

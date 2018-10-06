@@ -11,18 +11,21 @@ namespace Organization.Objects
 {
     public class SoftFile
     {
-        public SoftFile(string name, uint id) { Name = name ?? ""; Id = id; _tags = new List<string>(); Description = ""; }
-        public SoftFile(string name, string thumbnail, uint id) { Name = name ?? ""; Thumbnail = thumbnail ?? ""; Description = ""; Id = id; _tags = new List<string>(); }
-        public SoftFile(string name, string thumbnail, uint id, string description, string[] tags, string hash) { Name = name ?? ""; Thumbnail = thumbnail ?? ""; Id = id; Description = description ?? ""; _tags = (tags ?? new string[0]).ToList(); }
+        public SoftFile(string name, uint id) { Name = name ?? ""; Id = id; _tags = new List<string>(); Description = ""; Links = new List<uint>(); }
+        public SoftFile(string name, string thumbnail, uint id) { Name = name ?? ""; Thumbnail = thumbnail ?? ""; Description = ""; Id = id; _tags = new List<string>(); Links = new List<uint>(); }
+        public SoftFile(string name, string thumbnail, uint id, string description, string[] tags, string hash) { Name = name ?? ""; Thumbnail = thumbnail ?? ""; Id = id; Description = description ?? ""; _tags = (tags ?? new string[0]).ToList(); Links = new List<uint>(); }
 
         public uint Id { get; }
+        public bool Digital { get; set; }
+        public List<uint> Links { get; }
+        
         public string Name { get; private set; }
         public string Thumbnail { get; private set; }
         public bool ThumbnailExists { get => File.Exists(Thumbnail); }
         public string Description { get; set; }
         public string Hash { get; private set; } = "";
         private List<string> _tags;
-
+        
         public void AddTag(string tag)
         {
             tag = tag.ToLower();

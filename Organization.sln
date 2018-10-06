@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hierarchy", "..\Hierarchy\H
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Indexing", "..\..\..\..\..\FTPShare\Coding Projects\Index\Index-v2\Indexing.csproj", "{BC91702A-F652-4DD9-9268-F0C88C7145F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization-V2", "Organization-V2\Organization-V2.csproj", "{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{BC91702A-F652-4DD9-9268-F0C88C7145F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC91702A-F652-4DD9-9268-F0C88C7145F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC91702A-F652-4DD9-9268-F0C88C7145F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

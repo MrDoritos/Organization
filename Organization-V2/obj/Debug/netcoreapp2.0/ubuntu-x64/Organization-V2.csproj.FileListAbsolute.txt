@@ -1,0 +1,17 @@
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\libhostpolicy.so
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\libhostfxr.so
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.deps.json
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.runtimeconfig.json
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.runtimeconfig.dev.json
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.pdb
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\Http.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ubuntu-x64\Http.pdb
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.csprojAssemblyReference.cache
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.csproj.CoreCompileInputs.cache
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.AssemblyInfoInputs.cache
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.AssemblyInfo.cs
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.csproj.CopyComplete
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\ubuntu-x64\Organization-V2.pdb
