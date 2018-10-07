@@ -10,6 +10,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using HtmlAgilityPack;
+using System.IO;
+using System.Linq;
 
 namespace Organization_V2
 {
@@ -26,7 +28,7 @@ namespace Organization_V2
             dir1.AddFile(CentralDirectory.CreateFile("Movie2"));
             var dir2 = CentralDirectory.AddDirectory(CentralDirectory.CreateDirectory("Books"));
             dir2.AddFile(CentralDirectory.CreateFile("Book1"));
-            dir2.AddFile(CentralDirectory.CreateFile("Book2"));
+            dir2.AddFile(CentralDirectory.CreateFile("Book2")).ThumbnailPath = "C:\\oof2.png";
             CMDHandler.selected = CentralDirectory.Self;
             Server = new Server();
             Server.RequestRecieved += RequestRecieved;
@@ -74,7 +76,9 @@ namespace Organization_V2
             {
                 case RequestType.Dir:
                     if (splturi.Length > 1)
-                        requestStruct.selectedDir = CentralDirectory.FindDir(splturi[1]);
+                    {
+                        if ((requestStruct.selectedDir = CentralDirectory.FindDir(splturi[1])) == null) { SendNotFound(client, true); return 0; }
+                    }
                     else
                     {
 
@@ -84,6 +88,13 @@ namespace Organization_V2
 
                         break;
                 case RequestType.Index:
+                    break;
+                case RequestType.Content:
+                    if (splturi.Length > 1)
+                    {
+                        if ((requestStruct.selectedThumbnail = CentralDirectory.FindThumbnail(splturi[1])) == null) { SendNotFound(client, false); return 0; }
+                    }
+                    else { SendNotFound(client, false); return 0; }
                     break;
                 case RequestType.SoftFile:
                     if (int.TryParse(splturi[splturi.Length - 1], out int i))
@@ -117,6 +128,8 @@ namespace Organization_V2
                     return RequestType.Dir;
                 case "file":
                     return RequestType.SoftFile;
+                case "content":
+                    return RequestType.Content;
                 default:
                     return RequestType.CDir;
             }
@@ -134,6 +147,9 @@ namespace Organization_V2
                     return;
                 case RequestType.Index:
                     return;
+                case RequestType.Content:
+                    SendContent(client, request.selectedThumbnail);
+                    return;
                 case RequestType.CDir:
                     SendCDir(client);
                     return;
@@ -142,6 +158,50 @@ namespace Organization_V2
                     return;
             }
             //SendCDir(client);
+        }
+
+        static void SendContent(TcpClient client, IThumbable ahhh)
+        {
+            if (ahhh.ThumbnailExists)
+            {
+                SendFile(client, ahhh.Thumbnail);
+            }
+            else
+            {
+                SendNotFound(client, false);
+            }
+        }
+
+        static void SendFile(TcpClient client, string filename)
+        {
+            throw new NotImplementedException();
+        }
+
+        static void SendFile(TcpClient client, FileStream file)
+        {
+            var ahh = new ResponseHeader(GetContentType(file.Name));
+            
+            client.Client.Send(Encoding.ASCII.GetBytes(HttpResponse.HeaderToString((ulong)file.Length, ahh) + "\r\n"));
+            byte[] buffer = new byte[4096];
+            int i;
+            while ((i = file.Read(buffer, 0, buffer.Length)) != 0)
+            {
+                client.Client.Send(buffer, 0, i, SocketFlags.None);
+            }
+        }
+
+        static HttpResponse.ContentTypes GetContentType(string filename)
+        {
+            switch (filename.Split('.').Last().ToLower())
+            {
+                case "jpeg":
+                case "jpg":
+                    return ResponseHeader.ContentTypes.IMAGEJPEG;
+                case "png":
+                    return ResponseHeader.ContentTypes.IMAGEPNG;
+                default:
+                    return ResponseHeader.ContentTypes.PLAIN;
+            }
         }
 
         static void SendFile(TcpClient client, SoftFile file)
@@ -207,6 +267,7 @@ namespace Organization_V2
         Index = 3,
         Dir = 4,
         SoftFile = 5,
+        Content = 6,
     }
 
     struct OrganizationRequest
@@ -217,5 +278,6 @@ namespace Organization_V2
         public SoftDirectory selectedDir;
         public SoftFile selectedFile;
         public bool centralDirectory;
+        public IThumbable selectedThumbnail;
     }
 }

@@ -1,0 +1,20 @@
+#directorytitle { display:inline; margin-left:auto; margin-right:auto; /*text-align:center; padding-top:1%; padding-bottom:1%; font-size: 300%; margin:0; border:5px solid black; background-color:rgba(255,255,255,0.2);*/ }
+#directory { margin:0; padding:1%; }
+html { background-color:rgb(2,75,185); font-family:times-new-roman; }
+#filecard { background-color:rgb(6,94,119); margin:5px; border:5px solid black; }
+#dircard { background-color:rgb(2,123,87); margin:5px; border:5px solid black; }
+#filecards { margin:0; margin-top:1%; font-size:150%; }
+#filecard:hover { background-color:rgba(255,255,255,0.7); }
+#dircard:hover { background-color:rgba(255,255,255,0.7); }
+#filereferencelist { background-color:rgba(255,255,255,0.6); border:5px solid black; }
+#taglist { background-color:rgba(255,255,255,0.6); border:5px solid black; }
+#fileheader { display:inline-flex; padding-top:1%; padding-bottom:1%; font-size: 150%; margin:0; border:5px solid black; background-color:rgba(255,255,255,0.2); width:100%;}
+#filepage { margin:0; padding:1%; }
+#filetitle { display:inline; margin-left:auto; margin-right:auto;}
+#tagsandref { display:flex; width:100%; padding:1px; }
+#filereferencelist { display:inline-block; width:100%; margin:1px; }
+#taglist { display:inline-block; width:100%; margin:1px; }
+#listtitle { text-align:center; }
+#tag { display:inline-block; margin: 1%; }
+#filereferences { margin:1%; }
+#thumbnail { min-width:10%; min-height:10%; max-width:20%; max-height:20%; display:inline;margin-left:auto;margin-right:2%; margin-top:1%;margin-bottom:1%; }

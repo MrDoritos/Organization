@@ -7,9 +7,11 @@ using System.Security.Cryptography;
 
 namespace Organization_V2
 {
-    public class SoftFile : IFile, ITaggable, IID, IHashable
+    public class SoftFile : IFile, ITaggable, IID, IHashable, IThumbable
     {
         private List<string> _tags;
+
+        private List<SoftFile> _references;
 
         //public static bool operator !=(SoftFile i, SoftFile b)
         //{
@@ -42,6 +44,7 @@ namespace Organization_V2
             Id = id;
             ThumbnailPath = thumbnailpath ?? "";
             _tags = new List<string>(tags ?? new string[0]);
+            _references = new List<SoftFile>();
         }
         public SoftFile(int id, string name, string thumbnailpath, string[] tags, SHA256 hash)
         {
@@ -50,6 +53,7 @@ namespace Organization_V2
             ThumbnailPath = thumbnailpath ?? "";
             _tags = new List<string>(tags ?? new string[0]);
             SHA256 = hash;
+            _references = new List<SoftFile>();
         }
         public SoftFile(int id, string name)
         {
@@ -57,10 +61,11 @@ namespace Organization_V2
             Id = id;
             ThumbnailPath = "";
             _tags = new List<string>();
+            _references = new List<SoftFile>();
         }
 
         public string Hashes =>
-            $"SHA256: {BitConverter.ToString(SHA256.Hash).Replace("-", "").ToLower()}";    
+            $"SHA256: {(SHA256 != null ? BitConverter.ToString(SHA256.Hash).Replace("-", "").ToLower() : "none")}";    
 
         public override string ToString()
         {
@@ -72,6 +77,7 @@ namespace Organization_V2
         public string ThumbnailPath { get; set; }
         public bool ThumbnailExists { get => File.Exists(ThumbnailPath); }
         public IReadOnlyList<string> Tags => _tags;
+        public IReadOnlyList<SoftFile> References => _references;
         public string[] TagArray => _tags.ToArray();
 
         public SHA256 SHA256 { get; private set; }
@@ -81,7 +87,9 @@ namespace Organization_V2
         public byte[] CRC32 => throw new NotImplementedException();
 
         public byte[] CRC64 => throw new NotImplementedException();
-        
+
+        public FileStream Thumbnail => File.OpenRead(ThumbnailPath);
+
         public void Hash(string filepath)
         {
             using (FileStream str = File.OpenRead(filepath))
@@ -123,5 +131,20 @@ namespace Organization_V2
             if (h == null || SHA256 == null) return false;
             if (h.SHA256.Compare(SHA256)) return true; else return false;
         }
+
+        public void AddReference(SoftFile i)
+        {
+           if (!ReferenceExists(i)) { _references.Add(i); }
+        }
+
+        public bool ReferenceExists(IID i)
+        {
+            return _references.Exists(n => n.Id == i.Id);
+        }
+
+        public void RemoveReference(IID i)
+        {
+            _references.RemoveAll(n => n.Id == i.Id);
+        }        
     }
 }

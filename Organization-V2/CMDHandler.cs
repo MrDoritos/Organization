@@ -95,6 +95,18 @@ namespace Organization_V2
                     case "tag":
                         Tag(args);
                         return;
+                    case "rmdir":
+                        DeleteDirectory(args);
+                        return;
+                    case "thumb":
+                        ChangeThumbnail(args);
+                        return;
+                    case "ref":
+                        Reference();
+                        return;
+                    case "styles":
+                        HTML.Style = HtmlAgilityPack.HtmlNode.CreateNode($"<style>{System.Web.HttpUtility.HtmlEncode(File.ReadAllText((args.Length > 0 ? args : "styles.css")))}</style>");
+                        return;
                 }
             }
             catch (Exception e)
@@ -105,6 +117,79 @@ namespace Organization_V2
         }
 
         public static SoftDirectory selected;
+
+        static void Reference()
+        {
+            SoftFile fileFirst = QueryFile();
+            SoftFile fileRefer = QueryFile();
+            if (fileFirst  ==  null || fileRefer == null) { return; }
+            fileFirst.AddReference(fileRefer);
+            Console.WriteLine($"{fileFirst} ({fileFirst.Id}) => {fileRefer} ({fileRefer.Id})");
+            if (fileFirst.Equals(fileRefer))
+            {
+                Console.WriteLine("This file equals the reference");
+            }
+            else
+            {
+                Console.WriteLine("The file does not equal the reference");
+            }
+        }
+
+        static SoftFile QueryFile()
+        {
+            int first;
+            SoftFile fileFirst;
+            while (true)
+            {
+                first = QueryInt("File Id?");
+                fileFirst = Program.CentralDirectory.GetFile(first);
+                if (fileFirst == null) { Console.WriteLine("File doesn't exist"); }
+                else
+                {
+                    if (QueryBool("Are you sure?"))
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        if (QueryBool("Quit?"))
+                        {
+                            return null;
+                        }
+                    }
+                }
+            }
+            Console.WriteLine($"Selected {fileFirst} ({fileFirst.Id})");
+            return fileFirst;
+        }
+
+        static void ChangeThumbnail(string args)
+        {
+            string[] a = args.Split(' ');
+            if (int.TryParse(args.Split(' ')[0], out int i))
+            {
+                var d = Program.CentralDirectory.FindThumbnail(i);
+
+                if (a != null)
+                {
+                    string p;
+                    if (a.Length > 1)
+                        p = args.Remove(0, a[0].Length + 1);
+                    else
+                        p = args.Remove(0, a[0].Length);
+                    d.ThumbnailPath = p;
+                    Console.WriteLine($"Thumbnail path set to '{p}'");
+                }
+                else
+                {
+                    Console.WriteLine("No thumbnail holders contain that id");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Specify Id");
+            }
+        }
 
         static void Tag(string args)
         {
@@ -135,7 +220,7 @@ namespace Organization_V2
         static void Tags(ITaggable t)
         {
             var tags = t.Tags;
-            Console.Write("Tags: ");
+            Console.Write("Tags:");
             for (int i = 0; i < tags.Count - 1; i++)
                 Console.Write($" {tags[i]},");
             Console.WriteLine(" " + tags[tags.Count - 1]);
@@ -151,6 +236,7 @@ namespace Organization_V2
         {
             var a = Database.Load(args);
             Console.WriteLine($"Loaded! {a.Directories.Count} top level directories, {a.Files.Count} central index files");
+            Program.CentralDirectory = a;
         }
 
         static void Where(string args)
@@ -304,10 +390,10 @@ namespace Organization_V2
             Console.WriteLine($"[{selected.Name}] {selected} | {selected.Id}");
             Console.ForegroundColor = ConsoleColor.Blue;
             foreach (var a in selected.SubDirectories)
-                Console.WriteLine($"[{a.Name}] {selected}");
+                Console.WriteLine($"{a.Id} [{a.Name}] {selected}");
             Console.ForegroundColor = ConsoleColor.Green;
             foreach (var a in selected.SoftFiles)
-                Console.WriteLine($"[{a.Name}] {selected}/{a.Name}");
+                Console.WriteLine($"{a.Id} [{a.Name}] {selected}/{a.Name}");
             Console.ForegroundColor = ConsoleColor.Gray;
             return 0;
         }
@@ -323,6 +409,52 @@ namespace Organization_V2
             else { selected = dir; }
             DisplaySelected(args);
             return 0;
+        }
+
+        static void DeleteDirectory(string args)
+        {
+            SoftDirectory dir;
+            if (args.Length < 1) return;
+            if (args[0] == '/') dir = Program.CentralDirectory.FindDir(args);
+            else dir = selected.FindDir(args);
+            if (dir == null) { Console.WriteLine($"Unknown directory or invalid path '{args}'"); }
+            else
+            {
+                if (QueryBool("Are you sure?"))
+                {
+                    if (selected.Id == 0) { Program.CentralDirectory.RemoveDirectory(dir); }else
+                    selected.RemoveSubDirectory(dir);
+                    Console.WriteLine("Deleted.");
+                }
+            }
+        }
+
+        static public bool QueryBool(string question)
+        {
+            ConsoleKeyInfo k;
+            while (true)
+            {
+                Console.Write(question + " [y/n] ");
+                k = Console.ReadKey();
+                if (k.Key == ConsoleKey.Y || k.Key == ConsoleKey.N) { Console.WriteLine();  return (k.Key == ConsoleKey.Y); }
+            }
+        }
+
+        static public int QueryInt(string question)
+        {
+            Console.WriteLine(question);
+            while (true)
+            {
+                if (int.TryParse(Console.ReadLine(), out int i))
+                {
+                    return i;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid integer");
+                }
+                
+            }
         }
 
         public static void ClearCharacters()

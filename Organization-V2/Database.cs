@@ -23,6 +23,12 @@ namespace Organization_V2
         {
             var a = new Loader(fs);
             var b = LoadCentralIndex(a);
+
+            //SoftDirectory[] softDirectories = new SoftDirectory[4];
+            //for (int i = 0; i < 4; i++)
+            //    softDirectories[i] = LoadSoftDir(a, b);
+            //return new CentralDirectory(b, softDirectories);
+
             var c = LoadSoftDir(a, b).SubDirectories;
             return new CentralDirectory(b, c);
         }
@@ -31,9 +37,9 @@ namespace Organization_V2
         {
             var a = new UnLoader(fs);
             SaveCentralIndex(a, i);
-            var b = i.Directories;
-            foreach (var c in b)
-                SaveSoftDir(a, c);
+            //var b = i.Self;
+            //foreach (var c in b)
+                SaveSoftDir(a, i.Self);
         }
 
         private static CentralIndex LoadCentralIndex(Loader a)
@@ -58,20 +64,33 @@ namespace Organization_V2
                 SaveSoftFile(a, files[i]);
         }
 
-        private static SoftDirectory LoadSoftDir(Loader a, CentralIndex s)
+        private static SoftDirectory LoadSoftDir(Loader a, CentralIndex s, SoftDirectory parent = null)
         {
             int id = a.NextInt;
             int subDirCount = a.NextInt;
             int fileCount = a.NextInt;
             string name = a.NextString;
             string[] tags = Tags(a);
-            SoftDirectory[] subDirs = new SoftDirectory[subDirCount];
-            SoftFile[] softFiles = new SoftFile[fileCount];
+
+            SoftDirectory cur = new SoftDirectory(id, name);
+            //if (parent == null)
+            //    cur = new SoftDirectory(id, name);
+            //else
+            //    cur = parent.AddDirectory(new SoftDirectory(id, name));
+
+            //SoftDirectory[] subDirs = new SoftDirectory[subDirCount];
+            //SoftFile[] softFiles = new SoftFile[fileCount];
+            //for (int i = 0; i < subDirCount; i++)
+            //    subDirs[i] = LoadSoftDir(a, s, cur);
+            //for (int i = 0; i < fileCount; i++)
+            //    softFiles[i] = s.FirstOrDefault(a.NextInt);
             for (int i = 0; i < subDirCount; i++)
-                subDirs[i] = LoadSoftDir(a, s);
+                cur.AddDirectory(LoadSoftDir(a, s, cur));
             for (int i = 0; i < fileCount; i++)
-                softFiles[i] = s.FirstOrDefault(a.NextInt);
-            return new SoftDirectory(id, name, subDirs, softFiles, tags);
+                cur.DatabaseAddFile(s.FirstOrDefault(a.NextInt));
+
+            //            return new SoftDirectory(id, name, subDirs, softFiles, tags);
+            return cur;
         }
 
         private static void SaveSoftDir(UnLoader a, SoftDirectory i)
@@ -112,14 +131,14 @@ namespace Organization_V2
 
         private static SHA256 LoadSHA256(Loader a)
         {
-            if (a.NextByte < 32) return null;
+            if (a.NextByte != 32) return null;
             else return new SHA256(a.Load(32));
         }
 
         private static void SaveSHA256(UnLoader a, SHA256 i)
         {
-            if (i == null || i.Hash == null) a.PackByte(0);
-            else { a.Pack(i.Hash); }
+            if (i == null || i.Hash == null || i.Hash.Length != 32) a.PackByte(0);
+            else { a.PackByte(32); a.Pack(i.Hash); }
         }
         
         private static string[] Tags(Loader a)

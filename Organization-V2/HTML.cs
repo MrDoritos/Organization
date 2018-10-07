@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using HtmlAgilityPack;
+using System.Linq;
 using Encode = System.Web.HttpUtility;
 
 namespace Organization_V2
@@ -20,8 +21,36 @@ namespace Organization_V2
         public static HtmlNode FilePage(SoftFile i)
         {
             HtmlNode node = HtmlNode.CreateNode("<div id=\"filepage\" />");
-            node.AppendChild(HtmlNode.CreateNode($"<h1 id=\"filetitle\">{Encode.HtmlEncode(i.Name)}</h1>"));
+            var head = node.AppendChild(HtmlNode.CreateNode("<div id=\"fileheader\" />"));
+            head.AppendChild(HtmlNode.CreateNode($"<h1 id=\"filetitle\">{Encode.HtmlEncode(i.Name)}</h1>"));
+            if (i.ThumbnailExists) head.AppendChild(Thumbnail(i, i.Id.ToString()));
+            //node.AppendChild(Thumbnail(i, i.Id.ToString()));
+            var tagsandref = node.AppendChild(HtmlNode.CreateNode("<div id=\"tagsandref\" />"));
+            var refrr = i.References;
+            
+            if (refrr.Count > 0)
+                tagsandref.AppendChild(List("div", "References", "filereferencelist", refrr.Select(n => $"<a id=\"filereferences\" href=\"/file&{n.Id}\">{Encode.HtmlEncode(n.Name)}</a>").ToArray()));
+            node.AppendChild(HtmlNode.CreateNode($"<p id=\"hashes\">{i.Hashes}</p>"));
+            var tags = i.Tags;
+            if (tags.Count > 0)
+                tagsandref.AppendChild(List("div", "Tags", "taglist", tags.Select(n => $"<p id=\"tag\">{n}</p>").ToArray()));
             return node;
+        }
+
+        public static HtmlNode List(string tag, string title, string id, params string[] vs)
+        {
+            HtmlNode node = HtmlNode.CreateNode($"<{tag} id=\"{id}\" />");
+            node.AppendChild(HtmlNode.CreateNode("<div id=\"listtitle\" />")).AppendChild(HtmlNode.CreateNode($"<h1>{Encode.HtmlEncode(title)}</h1>"));
+            var div = node.AppendChild(HtmlNode.CreateNode("<div id=\"list\" />"));
+            foreach (var a in vs)
+                div.AppendChild(HtmlNode.CreateNode(a));
+            return node;
+        }
+
+        public static HtmlNode Thumbnail(IThumbable i, string thumbpath)
+        {
+            //if (i == null) return HtmlNode.CreateNode("<a />");
+            return HtmlNode.CreateNode($"<img id=\"thumbnail\" src=\"/content&{thumbpath}\" />");
         }
 
         public static HtmlNode IndexPage(SoftDirectory i)
@@ -54,7 +83,8 @@ namespace Organization_V2
         public static HtmlNode CentralDirectoryPage(CentralDirectory i)
         {
             HtmlNode dir = HtmlNode.CreateNode("<div id=\"directory\" />");
-            dir.AppendChild(Text("Central Directory", "h1", "directorytitle"));
+            var div = dir.AppendChild(HtmlNode.CreateNode("<div id=\"fileheader\" />"));
+            div.AppendChild(Text("Central Directory", "h1", "directorytitle"));
             HtmlNode cards = dir.AppendChild(HtmlNode.CreateNode("<div id=\"filecards\" />"));
             foreach (var a in i.Directories)
                 cards.AppendChild(DirCard(a));
@@ -77,7 +107,7 @@ namespace Organization_V2
             return card;
         }
 
-        public static HtmlNode Style { get; } = HtmlNode.CreateNode("<style>" +
+        public static HtmlNode Style { get; set; } = HtmlNode.CreateNode("<style>" +
             "#directorytitle { text-align:center; }" +
             "#directory {background-color:rgba(155,155,255,0.5);}" +
             "html {background-color:black; font-family:consolas;}" +
@@ -90,7 +120,10 @@ namespace Organization_V2
         public static HtmlNode DirectoryPage(SoftDirectory i)
         {
             HtmlNode dir = HtmlNode.CreateNode("<div id=\"directory\" />");
-            dir.AppendChild(Text(i.Name, "h1", "directorytitle"));
+            var div = dir.AppendChild(HtmlNode.CreateNode("<div id=\"fileheader\">"));
+            var ass = div.AppendChild(Text(i.Name, "h1", "directorytitle"));
+            //dir.AppendChild(Text(i.Name, "h1", "directorytitle")).AppendChild(Thumbnail(i, i.URI()));
+            if (i.ThumbnailExists) div.AppendChild(Thumbnail(i, i.URI()));
             HtmlNode cards = dir.AppendChild(HtmlNode.CreateNode("<div id=\"filecards\" />"));
             foreach (var a in i.SubDirectories)
                 cards.AppendChild(DirCard(a));

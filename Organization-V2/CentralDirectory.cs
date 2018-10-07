@@ -46,11 +46,49 @@ namespace Organization_V2
         public IReadOnlyList<IID> Find(IID i)
         {
             throw new NotImplementedException();
-        }
+        }        
 
         public SoftFile GetFile(int id)
         {
             return base.FirstOrDefault(id);
+        }
+
+        public IThumbable FindThumbnail(string path)
+        {
+            string[] vs = path.Trim('/').Split('/');
+            int[] s = new int[vs.Length];
+            for (int i = 0; i < vs.Length; i++)
+                if (int.TryParse(vs[i], out int t)) { s[i] = t; } else { return null; }
+            var a = Files.FirstOrDefault(n => n.Id == s[0]);
+            return a != null ? a : FindThumbnail(s);
+        }
+
+        public IThumbable FindThumbnail(int id)
+        {
+            var a = Files.FirstOrDefault(n => n.Id == id);
+            return a != null ? a : FindThumbRec(id, Self);
+        }
+
+        public IThumbable FindThumbRec(int id, SoftDirectory i)
+        {
+            if (i.Id == id) return i;
+            foreach (var a in i.SoftFiles)
+                if (a.Id == id) return a;
+            foreach (var a in i.SubDirectories)
+            {
+                var asd = FindThumbRec(id, a);
+                if (asd != null) return asd;
+            }
+            return null;
+        }
+
+        public IThumbable FindThumbnail(int[] idpath, int pos = 0)
+        {
+
+            var cur = _directories.FirstOrDefault(n => n.Id == idpath[pos]);
+
+            if (cur == null || pos > idpath.Length - 2) return cur;
+            return cur.FindThumb(idpath, pos + 1);
         }
         
         public SoftDirectory FindDir(string path)
@@ -104,12 +142,12 @@ namespace Organization_V2
 
         public void RemoveDirectory(SoftDirectory i)
         {
-            throw new NotImplementedException();
+            _directories.RemoveAll(n => n.Id == i.Id);
         }
 
         public void RemoveDirectory(IID i)
         {
-            throw new NotImplementedException();
+            _directories.RemoveAll(n => n.Id == i.Id);
         }
     }
 }

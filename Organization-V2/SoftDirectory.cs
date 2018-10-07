@@ -2,10 +2,11 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 namespace Organization_V2
 {
-    public class SoftDirectory : IID, ITaggable, IDirectory
+    public class SoftDirectory : IID, ITaggable, IDirectory, IThumbable
     {
         public SoftDirectory(int id, string name)
         {
@@ -13,6 +14,7 @@ namespace Organization_V2
             _subDirs = new List<SoftDirectory>();
             _softFiles = new List<SoftFile>();
             _tags = new List<string>();
+            ThumbnailPath = "";
             Id = id;
         }
 
@@ -22,6 +24,7 @@ namespace Organization_V2
             _subDirs = new List<SoftDirectory>(subDirs);
             _softFiles = new List<SoftFile>(files);
             _tags = new List<string>(tags);
+            ThumbnailPath = "";
             Id = id;
         }
 
@@ -44,10 +47,16 @@ namespace Organization_V2
         public IReadOnlyList<SoftFile> SoftFiles => _softFiles;
 
         public SoftDirectory Parent { get; private set; }
-        
+
+        public bool ThumbnailExists => File.Exists(ThumbnailPath);
+
+        public string ThumbnailPath { get; set; }
+
+        public FileStream Thumbnail => File.OpenRead(ThumbnailPath);
+
         public SoftDirectory AddDirectory(SoftDirectory i)
         {
-            i.Parent = this;
+            i.Parent = (Id == 0 ? null : this);
             _subDirs.Add(i);
             return i;
         }
@@ -59,6 +68,11 @@ namespace Organization_V2
             else
                 throw new InvalidOperationException("File already exists");
             return i;
+        }
+
+        public void DatabaseAddFile(SoftFile i)
+        {
+            if (i != null) _softFiles.Add(i);
         }
 
         public bool Exists(int id)
@@ -99,7 +113,7 @@ namespace Organization_V2
 
         public void RemoveSubDirectory(IID i)
         {
-            throw new NotImplementedException();
+            _subDirs.RemoveAll(n => n.Id == i.Id);
         }
 
         public void RemoveTag(string tag)
@@ -153,6 +167,16 @@ namespace Organization_V2
             var cur = _subDirs.FirstOrDefault(n => n.Id == idpath[pos]);
             if (cur == null || pos > idpath.Length - 2) return cur;
             return cur.FindDir(idpath, pos + 1);
+        }
+
+        public IThumbable FindThumb(int[] idpath, int pos = 0)
+        {
+            var cur = (_subDirs.FirstOrDefault(n => n.Id == idpath[pos]));
+            var hm = (_softFiles.FirstOrDefault(n => n.Id == idpath[pos]) as IThumbable);
+            if (hm != null) return hm;
+            if (cur != null) return cur;
+            if (cur == null || pos > idpath.Length - 2) return cur;
+            return FindThumb(idpath, pos + 1);
         }
 
         public SoftDirectory RecursiveSearch(string[] paths, SoftDirectory last, int cur = 0)
