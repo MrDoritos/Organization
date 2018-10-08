@@ -46,6 +46,15 @@ namespace Organization_V2
             _tags = new List<string>(tags ?? new string[0]);
             _references = new List<SoftFile>();
         }
+        public SoftFile(int id, string name, string thumbnailpath, string[] tags, IHashable i)
+        {
+            Name = name;
+            Id = id;
+            ThumbnailPath = thumbnailpath ?? "";
+            _tags = new List<string>(tags ?? new string[0]);
+            _references = new List<SoftFile>();
+            SHA256 = i.SHA256;
+        }
         public SoftFile(int id, string name, string thumbnailpath, string[] tags, SHA256 hash)
         {
             Name = name;

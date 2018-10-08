@@ -134,6 +134,9 @@ namespace Organization_V2
                     case "styles":
                         HTML.Style = HtmlAgilityPack.HtmlNode.CreateNode($"<style>{System.Web.HttpUtility.HtmlEncode(File.ReadAllText((args.Length > 0 ? args : "styles.css")))}</style>");
                         return;
+                    case "import":
+                        Import(args);
+                        return;
                 }
             }
             catch (Exception e)
@@ -141,6 +144,36 @@ namespace Organization_V2
                 Console.WriteLine($"'{command}' threw exception!\r\n{e.Message}");
             }
 
+        }
+
+        static void Import(string args)
+        {
+            if (Directory.Exists(args))
+            {
+                SoftDirectory s = null;
+                if (QueryBool("Are you sure you want to import?"))
+                    if ((s = Import(new DirectoryInfo(args))) != null) { Program.CentralDirectory.AddDirectory(s); }
+                
+            }
+        }
+
+        static SoftDirectory Import(DirectoryInfo i)
+        {
+            var d = i.GetDirectories();
+            var e = i.GetFiles();
+            SoftDirectory[] ss = new SoftDirectory[d.Length];
+            SoftFile[] ee = new SoftFile[e.Length];
+            for (int m = 0; m < d.Length; m++)
+                ss[m] = Import(d[m]);
+            for (int g = 0; g < e.Length; g++)
+                ee[g] = Import(e[g], Program.CentralDirectory);
+            return new SoftDirectory(Program.CentralDirectory.NextId, i.Name, ss, ee, new string[0]);
+        }
+
+        static SoftFile Import(FileInfo i, IIndex d)
+        {
+            var hash = new Hash(i.FullName);
+            return d.AddFile(Program.CentralDirectory.Find(hash) ?? new SoftFile(Program.CentralDirectory.NextId, i.Name, "", new string[0], hash));                
         }
 
         static void Rename(string args)

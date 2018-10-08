@@ -114,6 +114,11 @@ namespace Organization_V2
             return _softFiles.Any(n => n.Compare(i));
         }
 
+        public SoftFile Find(IHashable i)
+        {
+            return _softFiles.FirstOrDefault(n => n.Compare(i));
+        }
+
         public SoftFile OpenCLFirstOrDefault(int i, bool wr = false)
         {
             var query = (from num in _softFiles.AsQueryExpr()
