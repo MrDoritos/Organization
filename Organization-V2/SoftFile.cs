@@ -80,13 +80,15 @@ namespace Organization_V2
         public IReadOnlyList<SoftFile> References => _references;
         public string[] TagArray => _tags.ToArray();
 
+        
+
         public SHA256 SHA256 { get; private set; }
 
-        public byte[] SHA1 => throw new NotImplementedException();
+        public byte[] SHA1 { get; private set; }
 
-        public byte[] CRC32 => throw new NotImplementedException();
+        public byte[] CRC32 { get; private set; }
 
-        public byte[] CRC64 => throw new NotImplementedException();
+        public byte[] CRC64 { get; private set; } 
 
         public FileStream Thumbnail => File.OpenRead(ThumbnailPath);
 
@@ -100,6 +102,15 @@ namespace Organization_V2
                 }
             }
         }
+
+        public void Hash(IHashable a)
+        {
+            SHA256 = a.SHA256;
+            SHA1 = a.SHA1;
+            CRC32 = a.CRC32;
+            CRC64 = a.CRC64;
+        }
+
 
         public void AddTag(string tag)
         {

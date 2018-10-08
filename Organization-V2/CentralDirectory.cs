@@ -68,7 +68,7 @@ namespace Organization_V2
             var a = Files.FirstOrDefault(n => n.Id == id);
             return a != null ? a : FindThumbRec(id, Self);
         }
-
+        
         public void Search(string query, bool dir, bool file, List<KeyValuePair<int, IID>> values)
         {
             foreach (var a in _directories)

@@ -95,6 +95,9 @@ namespace Organization_V2
                     case "tag":
                         Tag(args);
                         return;
+                    case "remtag":
+                        RemTag(args);
+                        return;
                     case "tags":
                         Tags(selected as ITaggable ?? Program.CentralDirectory as ITaggable);
                         return;
@@ -112,6 +115,9 @@ namespace Organization_V2
                         return;
                     case "dir":
                         QueryDir(args);
+                        return;
+                    case "file":
+                        FileInfo(args);
                         return;
                     case "move":
                         MoveDirectory(args);
@@ -180,6 +186,31 @@ namespace Organization_V2
                 Console.WriteLine($"{a.Name} ({a.Id})");
             Console.ForegroundColor = ConsoleColor.Gray;
             Tags(dir);
+        }
+
+        static void FileInfo(string args)
+        {
+            if (int.TryParse(args, out int i))
+            {
+                var a = Program.CentralDirectory.FirstOrDefault(i);
+                if (a == null) { Console.WriteLine("Could not find file"); return; }
+                else
+                {
+                    FileInfo(a);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Specify an Id");
+            }
+        }
+
+        static void FileInfo(SoftFile f)
+        {
+            Console.WriteLine($"{f.Name} ({f.Id})");
+            Console.WriteLine(f.Hashes);
+            Console.WriteLine($"Thumbnail Path: {f.ThumbnailPath})");
+            Tags(f);
         }
 
         static void QueryDir(string args)
@@ -510,6 +541,32 @@ namespace Organization_V2
             }
         }
 
+        static void RemTag(string args)
+        {
+            if (int.TryParse(args.Split(' ')[0], out int i))
+            {
+                var a = Program.CentralDirectory.FindThumbnail(i) as ITaggable;
+
+                if (a != null)
+                {
+                    string[] remtags = args.Remove(0, args.Split(' ')[0].Length).Split(',').Where(n => n.Length > 1).Select(n => n.Trim().ToLower()).ToArray();
+                    Console.Write("Before: ");
+                    Tags(a);
+                    a.RemoveTags(remtags);
+                    Console.Write("After: ");
+                    Tags(a);
+                }
+                else
+                {
+                    Console.WriteLine("No tag holders contain that id");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Specify Id");
+            }
+        }
+
         static void Tag(string args)
         {
 
@@ -621,13 +678,23 @@ namespace Organization_V2
         static void MakeFile(string name)
         {
             SoftFile a;
-            if (File.Exists(name))
+            if (QueryBool("Import file?"))
             {
+                while (!File.Exists(name)) { name = Console.ReadLine(); }
                 FileInfo fileInfo = new FileInfo(name);
-                a = Program.CentralDirectory.AddFile(fileInfo.Name.Split('.')[0]);
+                var b = new Hash(name);
+                if (Program.CentralDirectory.Exists(b)) { Console.WriteLine("A file with the same hash already exists"); return; }
+                string fname = fileInfo.Name.Split('.')[0];
+                if (QueryBool($"Keep file name '{fname}'"))
+                a = Program.CentralDirectory.AddFile(fname);
+                else
+                {
+                    Console.Write("New name: ");
+                    a = Program.CentralDirectory.AddFile(Console.ReadLine());
+                }
                 try
                 {
-                    a.Hash(name);
+                    a.Hash(b);
                     Console.WriteLine(a.Hashes);
                 }
                 catch (Exception)

@@ -109,6 +109,11 @@ namespace Organization_V2
             return _softFiles.Exists(n => n.Id == i);
         }
 
+        public bool Exists(IHashable i)
+        {
+            return _softFiles.Any(n => n.Compare(i));
+        }
+
         public SoftFile OpenCLFirstOrDefault(int i, bool wr = false)
         {
             var query = (from num in _softFiles.AsQueryExpr()
