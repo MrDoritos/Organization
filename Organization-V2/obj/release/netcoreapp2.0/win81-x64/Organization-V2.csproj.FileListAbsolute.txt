@@ -1,0 +1,17 @@
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\hostpolicy.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\hostfxr.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\Organization-V2.exe
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\Organization-V2.deps.json
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\Organization-V2.runtimeconfig.json
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\Organization-V2.runtimeconfig.dev.json
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\Organization-V2.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\Organization-V2.pdb
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\Http.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\release\netcoreapp2.0\win81-x64\Http.pdb
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\release\netcoreapp2.0\win81-x64\Organization-V2.csprojAssemblyReference.cache
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\release\netcoreapp2.0\win81-x64\Organization-V2.csproj.CoreCompileInputs.cache
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\release\netcoreapp2.0\win81-x64\Organization-V2.AssemblyInfoInputs.cache
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\release\netcoreapp2.0\win81-x64\Organization-V2.AssemblyInfo.cs
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\release\netcoreapp2.0\win81-x64\Organization-V2.csproj.CopyComplete
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\release\netcoreapp2.0\win81-x64\Organization-V2.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\obj\release\netcoreapp2.0\win81-x64\Organization-V2.pdb

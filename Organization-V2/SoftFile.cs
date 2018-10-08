@@ -75,7 +75,7 @@ namespace Organization_V2
         public string Name { get; set; }
         public int Id { get; }
         public string ThumbnailPath { get; set; }
-        public bool ThumbnailExists { get => File.Exists(ThumbnailPath); }
+        public bool ThumbnailExists { get => (ThumbnailPath.Length > 0 && File.Exists(ThumbnailPath)); }
         public IReadOnlyList<string> Tags => _tags;
         public IReadOnlyList<SoftFile> References => _references;
         public string[] TagArray => _tags.ToArray();

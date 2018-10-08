@@ -69,6 +69,12 @@ namespace Organization_V2
             return a != null ? a : FindThumbRec(id, Self);
         }
 
+        public void Search(string query, bool dir, bool file, List<KeyValuePair<int, IID>> values)
+        {
+            foreach (var a in _directories)
+                a.Search(query, dir, file, values);
+        }
+
         public IThumbable FindThumbRec(int id, SoftDirectory i)
         {
             if (i.Id == id) return i;
@@ -89,6 +95,25 @@ namespace Organization_V2
 
             if (cur == null || pos > idpath.Length - 2) return cur;
             return cur.FindThumb(idpath, pos + 1);
+        }
+
+        public SoftDirectory FindDir(int id)
+        {
+            if (Exists(id)) { return null; }
+            else if (CurId < id)
+            { return null; } else
+            {
+                var cur = _directories.FirstOrDefault(n => n.Id == id);
+                return (cur == null ? RecursiveSearch(id) : cur);
+            }
+        }
+
+        private SoftDirectory RecursiveSearch(int id)
+        {
+            SoftDirectory result = null;
+            foreach (var a in _directories)
+                result = (a.RecursiveSearch(id) ?? result);
+            return result;
         }
         
         public SoftDirectory FindDir(string path)

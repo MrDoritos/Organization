@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
+
 namespace Organization_V2
 {
     public static class Database
@@ -52,7 +53,7 @@ namespace Organization_V2
                 cindex[i] = LoadSoftFile(a);
             return new CentralIndex(nextid, cindex);
         }
-
+        
         private static void SaveCentralIndex(UnLoader a, CentralIndex s)
         {
             a.PackInt(s.CurId);
@@ -70,9 +71,10 @@ namespace Organization_V2
             int subDirCount = a.NextInt;
             int fileCount = a.NextInt;
             string name = a.NextString;
+            string thumb = a.NextString;
             string[] tags = Tags(a);
 
-            SoftDirectory cur = new SoftDirectory(id, name);
+            SoftDirectory cur = new SoftDirectory(id, name, thumb);
             //if (parent == null)
             //    cur = new SoftDirectory(id, name);
             //else
@@ -103,6 +105,7 @@ namespace Organization_V2
             a.PackInt(subdircount);
             a.PackInt(filecount);
             a.PackString(i.Name);
+            a.PackString(i.ThumbnailPath);
             Tags(a, i.TagArray);
             for (int b = 0; b < subdircount; b++)
                 SaveSoftDir(a, subdirs[b]);
@@ -140,7 +143,7 @@ namespace Organization_V2
             if (i == null || i.Hash == null || i.Hash.Length != 32) a.PackByte(0);
             else { a.PackByte(32); a.Pack(i.Hash); }
         }
-        
+                
         private static string[] Tags(Loader a)
         {
             int count = a.NextInt;

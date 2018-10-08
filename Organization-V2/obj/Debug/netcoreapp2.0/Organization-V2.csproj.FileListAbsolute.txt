@@ -12,3 +12,5 @@ C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\O
 C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\Organization-V2.pdb
 C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\Organization-V2.dll
 C:\Users\Ian\source\repos\Organization\Organization-V2\obj\Debug\netcoreapp2.0\Organization-V2.pdb
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ConsoleTools.dll
+C:\Users\Ian\source\repos\Organization\Organization-V2\bin\Debug\netcoreapp2.0\ConsoleTools.pdb

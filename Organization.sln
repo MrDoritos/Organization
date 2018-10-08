@@ -13,7 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hierarchy", "..\Hierarchy\H
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Indexing", "..\..\..\..\..\FTPShare\Coding Projects\Index\Index-v2\Indexing.csproj", "{BC91702A-F652-4DD9-9268-F0C88C7145F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organization-V2", "Organization-V2\Organization-V2.csproj", "{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Organization-V2", "Organization-V2\Organization-V2.csproj", "{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTools", "..\ConsoleTools\ConsoleTools\ConsoleTools.csproj", "{EB31A958-3BA5-4367-B068-AAC82C942366}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "..\ConsoleTools\Tests\Tests.csproj", "{1E0DF10B-5361-481B-9DDD-D4DDE9AC66FE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5B5DDEC-0E79-423C-B72A-B024C5ADEFBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB31A958-3BA5-4367-B068-AAC82C942366}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB31A958-3BA5-4367-B068-AAC82C942366}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB31A958-3BA5-4367-B068-AAC82C942366}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB31A958-3BA5-4367-B068-AAC82C942366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E0DF10B-5361-481B-9DDD-D4DDE9AC66FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E0DF10B-5361-481B-9DDD-D4DDE9AC66FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E0DF10B-5361-481B-9DDD-D4DDE9AC66FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E0DF10B-5361-481B-9DDD-D4DDE9AC66FE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

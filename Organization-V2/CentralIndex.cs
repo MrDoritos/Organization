@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Nessos.LinqOptimizer.CSharp;
 
 namespace Organization_V2
 {
@@ -101,6 +102,24 @@ namespace Organization_V2
         public SoftFile FirstOrDefault(int i)
         {
             return _softFiles.FirstOrDefault(n => n.Id == i);
+        }
+
+        public bool Exists(int i)
+        {
+            return _softFiles.Exists(n => n.Id == i);
+        }
+
+        public SoftFile OpenCLFirstOrDefault(int i, bool wr = false)
+        {
+            var query = (from num in _softFiles.AsQueryExpr()
+                         where num.Id == i
+                         select num);
+            var res = query.Run();
+            if (wr) {
+                Console.WriteLine($"{res.Count()} Results");
+            foreach (var a in res)
+                    Console.WriteLine($"[{a.Id}] {a.Name}"); }
+            return res.FirstOrDefault();
         }
     }
 }

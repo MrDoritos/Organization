@@ -18,6 +18,16 @@ namespace Organization_V2
             Id = id;
         }
 
+        public SoftDirectory(int id, string name, string thumb)
+        {
+            Name = name;
+            _subDirs = new List<SoftDirectory>();
+            _softFiles = new List<SoftFile>();
+            _tags = new List<string>();
+            ThumbnailPath = thumb;
+            Id = id;
+        }
+
         public SoftDirectory(int id, string name, SoftDirectory[] subDirs, SoftFile[] files, string[] tags)
         {
             Name = name;
@@ -28,7 +38,7 @@ namespace Organization_V2
             Id = id;
         }
 
-        public string Name { get; }
+        public string Name { get; set; }
 
         private List<SoftDirectory> _subDirs;
 
@@ -48,7 +58,7 @@ namespace Organization_V2
 
         public SoftDirectory Parent { get; private set; }
 
-        public bool ThumbnailExists => File.Exists(ThumbnailPath);
+        public bool ThumbnailExists => (ThumbnailPath.Length > 0 && File.Exists(ThumbnailPath));
 
         public string ThumbnailPath { get; set; }
 
@@ -59,6 +69,16 @@ namespace Organization_V2
             i.Parent = (Id == 0 ? null : this);
             _subDirs.Add(i);
             return i;
+        }
+
+        public void Search(string query, bool dir, bool file, List<KeyValuePair<int, IID>> values)
+        {
+            if (dir) values.Add(new KeyValuePair<int, IID>(Extension.Compute(Name, query), this));
+            foreach (var a in _subDirs)
+                a.Search(query, dir, file, values);
+            if (file)
+                foreach (var a in _softFiles)
+                    values.Add(new KeyValuePair<int, IID>(Extension.Compute(a.Name, query), a));
         }
 
         public SoftFile AddFile(SoftFile i, bool check = true)
@@ -143,7 +163,7 @@ namespace Organization_V2
 
         public void RemoveDirectory(SoftDirectory i)
         {
-            throw new NotImplementedException();
+            _subDirs.RemoveAll(n => n.Id == i.Id || ReferenceEquals(n,i));
         }
 
         public void RemoveDirectory(IID i)
@@ -186,6 +206,15 @@ namespace Organization_V2
             var a = GetChild(paths[cur]);
             if (a == null) return null;
             return RecursiveSearch(paths, a, cur + 1);
+        }
+
+        public SoftDirectory RecursiveSearch(int id)
+        {
+            if (Id == id) return this;
+            SoftDirectory result = null;
+            foreach (var a in _subDirs)
+                result = (a.RecursiveSearch(id) ?? result);
+            return result;
         }
 
         public SoftDirectory GetChild(string name, bool casesens = false)

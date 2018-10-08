@@ -10,5 +10,6 @@ namespace Organization_V2
         bool ThumbnailExists { get; }
         string ThumbnailPath { get; set; }
         FileStream Thumbnail { get; }
+        string Name { get; set; }
     }
 }

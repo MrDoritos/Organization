@@ -12,6 +12,7 @@ using System.Text;
 using HtmlAgilityPack;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Organization_V2
 {
@@ -64,26 +65,31 @@ namespace Organization_V2
         }
 
 
-        static int RequestRecieved(HttpRequest request, TcpClient client)
+        static KeyValuePair<string, DateTime>[] RequestRecieved(HttpRequest request, TcpClient client)
         {
+            List<KeyValuePair<string, DateTime>> timings = new List<KeyValuePair<string, DateTime>>();
             OrganizationRequest requestStruct = new OrganizationRequest();
             requestStruct.requestURI = (request.RequestURI = request.RequestURI.TrimStart('/'));
             RequestType a;
             requestStruct.requestType = (a = GetRequestType(request.RequestURI));
             if (a == RequestType.CDir) requestStruct.centralDirectory = true;
             string[] splturi = request.RequestURI.Split('&');
+            timings.Add(new KeyValuePair<string, DateTime>("Request Translation", DateTime.Now));
             switch (a)
             {
                 case RequestType.Dir:
                     if (splturi.Length > 1)
                     {
-                        if ((requestStruct.selectedDir = CentralDirectory.FindDir(splturi[1])) == null) { SendNotFound(client, true); return 0; }
+                        if ((requestStruct.selectedDir = CentralDirectory.FindDir(splturi[1])) == null) {
+                            SendNotFound(client, timings, true);
+                            return timings.ToArray();
+                        }
                     }
                     else
                     {
 
-                        SendNotFound(client, true);
-                        return 0;
+                        SendNotFound(client, timings, true);
+                        return timings.ToArray();
                     }
 
                         break;
@@ -92,25 +98,35 @@ namespace Organization_V2
                 case RequestType.Content:
                     if (splturi.Length > 1)
                     {
-                        if ((requestStruct.selectedThumbnail = CentralDirectory.FindThumbnail(splturi[1])) == null) { SendNotFound(client, false); return 0; }
+                        if ((requestStruct.selectedThumbnail = CentralDirectory.FindThumbnail(splturi[1])) == null) {
+                            SendNotFound(client, timings, false);
+                            return timings.ToArray();
+                        }
                     }
-                    else { SendNotFound(client, false); return 0; }
+                    else {
+                        SendNotFound(client, timings, false);
+                        return timings.ToArray();
+                    }
                     break;
                 case RequestType.SoftFile:
                     if (int.TryParse(splturi[splturi.Length - 1], out int i))
                     {
                         requestStruct.selectedFile = CentralDirectory.FirstOrDefault(i);
-                        if (requestStruct.selectedFile == null) { SendNotFound(client, true); return 0; }
+                        if (requestStruct.selectedFile == null) {
+                            SendNotFound(client, timings, true);
+                            return timings.ToArray();
+                        }
                     }
                     else
                     {
-                        SendNotFound(client, true);
-                        return 0;
+                        SendNotFound(client, timings, true);
+                        return timings.ToArray();
                     }
                     break;                
             }
-            HandleOrganizationRequest(client, requestStruct);
-            return 0;
+            HandleOrganizationRequest(client, requestStruct, timings);
+            timings.Add(new KeyValuePair<string, DateTime>("Handle Request", DateTime.Now));
+            return timings.ToArray();
         }
 
         static RequestType GetRequestType(string uri)
@@ -135,40 +151,46 @@ namespace Organization_V2
             }
         }
 
-        static void HandleOrganizationRequest(TcpClient client, OrganizationRequest request)
+        static void HandleOrganizationRequest(TcpClient client, OrganizationRequest request, List<KeyValuePair<string, DateTime>> timings)
         {
             switch (request.requestType)
             {
                 case RequestType.Dir:
-                    SendDir(client, request.selectedDir);
+                    SendDir(client, request.selectedDir, timings);
+                    timings.Add(new KeyValuePair<string, DateTime>("Sending Directory", DateTime.Now));
                     return;
                 case RequestType.SoftFile:
-                    SendFile(client, request.selectedFile);
+                    SendFile(client, request.selectedFile, timings);
+                    timings.Add(new KeyValuePair<string, DateTime>("Sending Softfile", DateTime.Now));
                     return;
                 case RequestType.Index:
+                    timings.Add(new KeyValuePair<string, DateTime>("Sending Index", DateTime.Now));
                     return;
                 case RequestType.Content:
-                    SendContent(client, request.selectedThumbnail);
+                    SendContent(client, request.selectedThumbnail, timings);
+                    timings.Add(new KeyValuePair<string, DateTime>("Sending Content", DateTime.Now));
                     return;
                 case RequestType.CDir:
-                    SendCDir(client);
+                    SendCDir(client, timings);
+                    timings.Add(new KeyValuePair<string, DateTime>("Sending Central Directory", DateTime.Now));
                     return;
                 default:
-                    SendCDir(client);
+                    SendCDir(client, timings);
+                    timings.Add(new KeyValuePair<string, DateTime>("Sending Central Directory", DateTime.Now));
                     return;
             }
             //SendCDir(client);
         }
 
-        static void SendContent(TcpClient client, IThumbable ahhh)
+        static void SendContent(TcpClient client, IThumbable ahhh, List<KeyValuePair<string, DateTime>> timings)
         {
             if (ahhh.ThumbnailExists)
             {
-                SendFile(client, ahhh.Thumbnail);
+                SendFile(client, ahhh.Thumbnail, timings);
             }
             else
             {
-                SendNotFound(client, false);
+                SendNotFound(client, timings, false);
             }
         }
 
@@ -177,7 +199,7 @@ namespace Organization_V2
             throw new NotImplementedException();
         }
 
-        static void SendFile(TcpClient client, FileStream file)
+        static void SendFile(TcpClient client, FileStream file, List<KeyValuePair<string, DateTime>> timings)
         {
             var ahh = new ResponseHeader(GetContentType(file.Name));
             
@@ -188,6 +210,7 @@ namespace Organization_V2
             {
                 client.Client.Send(buffer, 0, i, SocketFlags.None);
             }
+            timings.Add(new KeyValuePair<string, DateTime>("Sending", DateTime.Now));
         }
 
         static HttpResponse.ContentTypes GetContentType(string filename)
@@ -204,28 +227,34 @@ namespace Organization_V2
             }
         }
 
-        static void SendFile(TcpClient client, SoftFile file)
+        static void SendFile(TcpClient client, SoftFile file, List<KeyValuePair<string, DateTime>> timings)
         {
             var a = HTML.FilePage(file);
             var b = GetHtml();
             b.DocumentNode.SelectSingleNode("//html/body").AppendChild(a);
+            timings.Add(new KeyValuePair<string, DateTime>("HTML Document", DateTime.Now));
             client.Client.Send(new HttpResponse(new ResponseHeader(), new Content(b.Serialize())).Serialize());
+            timings.Add(new KeyValuePair<string, DateTime>("Sending", DateTime.Now));
         }
 
-        static void SendDir(TcpClient client, SoftDirectory dir)
+        static void SendDir(TcpClient client, SoftDirectory dir, List<KeyValuePair<string, DateTime>> timings)
         {
             var a = HTML.DirectoryPage(dir);
             var b = GetHtml();
             b.DocumentNode.SelectSingleNode("//html/body").AppendChild(a);
+            timings.Add(new KeyValuePair<string, DateTime>("HTML Document", DateTime.Now));
             client.Client.Send(new HttpResponse(new ResponseHeader(), new Content(b.Serialize())).Serialize());
+            timings.Add(new KeyValuePair<string, DateTime>("Sending", DateTime.Now));
         }
 
-        static void SendCDir(TcpClient client)
+        static void SendCDir(TcpClient client, List<KeyValuePair<string, DateTime>> timings)
         {
             var a = HTML.CentralDirectoryPage(CentralDirectory);
             var b = GetHtml();
             b.DocumentNode.SelectSingleNode("//html/body").AppendChild(a);
-            client.Client.Send(new HttpResponse(new ResponseHeader(), new Content(b.Serialize())).Serialize());            
+            timings.Add(new KeyValuePair<string, DateTime>("HTML Document", DateTime.Now));
+            client.Client.Send(new HttpResponse(new ResponseHeader(), new Content(b.Serialize())).Serialize());
+            timings.Add(new KeyValuePair<string, DateTime>("Sending", DateTime.Now));
         }
 
         static HtmlDocument GetHtml()
@@ -236,14 +265,16 @@ namespace Organization_V2
             return a;
         }
 
-        static void SendNotFound(TcpClient client, bool includeText = false)
+        static void SendNotFound(TcpClient client, List<KeyValuePair<string, DateTime>> timings, bool includeText = false)
         {
             HttpResponse http;
             if (includeText)
                 http = new HttpResponse(new ResponseHeader() { ResponseCode = ResponseHeader.ResponseCodes.NOTFOUND }, new Content(IncText));
             else
                 http = new HttpResponse(new ResponseHeader() { ResponseCode = ResponseHeader.ResponseCodes.NOTFOUND });
+            timings.Add(new KeyValuePair<string, DateTime>("Create Response", DateTime.Now));
             client.Client.Send(http.Serialize());
+            timings.Add(new KeyValuePair<string, DateTime>("Sending", DateTime.Now));
         }
 
         static byte[] IncText { get; } = Encoding.ASCII.GetBytes("404 Resource unavailable");
